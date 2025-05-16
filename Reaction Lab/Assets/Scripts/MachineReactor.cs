@@ -2,66 +2,59 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// This script handles all machines like Stirrer, Burner, Freezer, Centrifuge, Distiller, and Electric Circuit.
-// Reactions happen based on ingredients inside a Beaker (Container) placed inside the machine.
-// It also allows manual testing in the Unity Editor without VR headset.
-
+/// <summary>
+/// Handles machine logic: triggers reactions based on ingredients inside Beakers
+/// or input zones (like Distiller). Pulls valid recipes from a shared ReactionRecipeLibrary.
+/// </summary>
 public class MachineReactor : MonoBehaviour
 {
-    [Header("Machine Settings")]
-    public MachineType machineType; // Select which type of machine this is
-    public List<ReactionRecipe> availableReactions = new List<ReactionRecipe>(); // List of recipes this machine can perform
+    [Header("Machine Type")]
+    public MachineType machineType; // Set per prefab
+
+    [Header("Link to central Reaction Recipe Library")]
+    public ReactionRecipeLibrary recipeLibrary;
 
     [Header("Activation Settings")]
-    public Collider activationCollider; // Assign a specific button or knob collider to trigger reaction by touch
+    public Collider activationCollider;
+    public bool testReactInEditor = false;
 
-    [Header("Testing (Editor Only)")]
-    public bool testReactInEditor = false; // If set to true during Play Mode, will trigger TryReact() immediately (for desktop testing)
+    [Header("Distiller Input Zone")]
+    public Transform inputTriggerArea;
+    private List<GameObject> inputIngredients = new List<GameObject>();
 
-    [Header("Input Settings (Distiller ONLY)")]
-    public Transform inputTriggerArea; // Funnel area for pouring into Distillers only
-    private List<GameObject> inputIngredients = new List<GameObject>(); // Ingredients poured into Distiller
+    [Header("Distiller Output")]
+    public Transform outputSpawnPoint;
 
-    [Header("Output Settings (Distiller ONLY)")]
-    public Transform outputSpawnPoint; // Spout where distilled compounds spawn
-
-    // Tracks the currently detected Beaker (Container) inside the machine trigger zone
     private Container activeContainer = null;
 
-    private void Update()
+    void Update()
     {
-        // Check if manual test activation was triggered during Play Mode
         if (testReactInEditor)
         {
-            testReactInEditor = false; // Reset immediately so it only happens once
+            testReactInEditor = false;
             TryReact();
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // If collision happens with the Activation Collider, trigger reaction immediately
         if (activationCollider != null && other == activationCollider)
         {
             TryReact();
             return;
         }
 
-        // Handle special case for Distillers: detect poured ingredients into input funnel
         if (machineType == MachineType.Distiller && inputTriggerArea != null)
         {
             Ingredient ingredient = other.GetComponent<Ingredient>();
             if (ingredient != null && other.transform.IsChildOf(inputTriggerArea))
             {
                 if (!inputIngredients.Contains(other.gameObject))
-                {
                     inputIngredients.Add(other.gameObject);
-                }
             }
         }
         else
         {
-            // Handle normal machines: detect Beakers (Container.cs) placed inside machine zone
             Container container = other.GetComponent<Container>();
             if (container != null)
             {
@@ -72,17 +65,13 @@ public class MachineReactor : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        // Handle ingredients exiting Distiller input funnel
         if (machineType == MachineType.Distiller && inputTriggerArea != null)
         {
             if (inputIngredients.Contains(other.gameObject))
-            {
                 inputIngredients.Remove(other.gameObject);
-            }
         }
         else
         {
-            // Handle Beakers exiting normal machines
             Container container = other.GetComponent<Container>();
             if (container != null && container == activeContainer)
             {
@@ -91,10 +80,14 @@ public class MachineReactor : MonoBehaviour
         }
     }
 
-    // Public method to try to process a reaction.
-    // Called either manually (testing), or automatically (collider touch).
     public void TryReact()
     {
+        if (recipeLibrary == null)
+        {
+            Debug.LogWarning("No recipe library assigned to MachineReactor.");
+            return;
+        }
+
         if (machineType == MachineType.Distiller)
         {
             TryDistill();
@@ -105,7 +98,6 @@ public class MachineReactor : MonoBehaviour
         }
     }
 
-    // Handles normal machine reactions (Stirrer, Burner, Freezer, Centrifuge, Electric Circuit).
     private void TryNormalReaction()
     {
         if (activeContainer == null || !activeContainer.HasContents())
@@ -116,7 +108,7 @@ public class MachineReactor : MonoBehaviour
 
         List<IngredientType> contents = activeContainer.GetContainedIngredientTypes();
 
-        foreach (ReactionRecipe recipe in availableReactions)
+        foreach (ReactionRecipe recipe in recipeLibrary.allRecipes)
         {
             if (machineType != recipe.requiredMachine)
                 continue;
@@ -134,19 +126,14 @@ public class MachineReactor : MonoBehaviour
         Debug.Log("No valid reaction found inside Beaker.");
     }
 
-    // Coroutine to process reaction after delay (normal machines).
     private IEnumerator ProcessNormalReaction(Container container, ReactionRecipe recipe)
     {
         Debug.Log("Processing normal machine reaction...");
-
-        yield return new WaitForSeconds(2f); // Simulated reaction time delay
-
+        yield return new WaitForSeconds(2f);
         container.SetContents(recipe.resultingCompoundPrefab);
-
         Debug.Log($"Beaker now holds: {recipe.resultingCompoundPrefab.name}");
     }
 
-    // Handles special Distiller reactions (pour input, spawn output).
     private void TryDistill()
     {
         if (inputIngredients.Count == 0)
@@ -161,12 +148,10 @@ public class MachineReactor : MonoBehaviour
         {
             Ingredient ing = obj.GetComponent<Ingredient>();
             if (ing != null && !collectedTypes.Contains(ing.ingredientType))
-            {
                 collectedTypes.Add(ing.ingredientType);
-            }
         }
 
-        foreach (ReactionRecipe recipe in availableReactions)
+        foreach (ReactionRecipe recipe in recipeLibrary.allRecipes)
         {
             if (machineType != recipe.requiredMachine)
                 continue;
@@ -184,23 +169,19 @@ public class MachineReactor : MonoBehaviour
         Debug.Log("No valid distillation reaction found.");
     }
 
-    // Coroutine to process distillation after delay.
     private IEnumerator ProcessDistillation(ReactionRecipe recipe)
     {
         Debug.Log("Processing distillation...");
-
-        yield return new WaitForSeconds(2f); // Simulated distillation time delay
+        yield return new WaitForSeconds(2f);
 
         foreach (GameObject obj in inputIngredients)
         {
             if (obj != null)
-            {
-                Destroy(obj); // Destroy poured ingredients after reaction
-            }
+                Destroy(obj);
         }
+
         inputIngredients.Clear();
 
-        // Spawn resulting compound at output spout
         if (outputSpawnPoint != null && recipe.resultingCompoundPrefab != null)
         {
             Instantiate(recipe.resultingCompoundPrefab, outputSpawnPoint.position, Quaternion.identity);
