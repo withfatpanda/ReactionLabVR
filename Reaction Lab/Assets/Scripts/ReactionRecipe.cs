@@ -1,17 +1,21 @@
 using UnityEngine;
 
-// Defines a recipe that tells the game which ingredients + machine produce a compound
-
+/// <summary>
+/// Represents a single chemical reaction setup used in Reaction Lab VR.
+/// This class is serializable and shared across all systems (machines, libraries).
+/// </summary>
 [System.Serializable]
 public class ReactionRecipe
 {
-    [Header("Ingredients Needed")]
-    public IngredientType ingredientAType; // First ingredient required
-    public IngredientType ingredientBType; // Optional second ingredient (can be None)
+    [Header("First required ingredient (dropdown)")]
+    public IngredientType ingredientAType;
 
-    [Header("Machine Type")]
-    public MachineType requiredMachine; // Which machine is needed to perform this reaction
+    [Header("Second required ingredient (optional)")]
+    public IngredientType ingredientBType;
 
-    [Header("Resulting Compound")]
-    public GameObject resultingCompoundPrefab; // The prefab of the resulting compound
+    [Header("Which machine performs this reaction")]
+    public MachineType requiredMachine;
+
+    [Header("Prefab result of the reaction")]
+    public GameObject resultingCompoundPrefab;
 }
