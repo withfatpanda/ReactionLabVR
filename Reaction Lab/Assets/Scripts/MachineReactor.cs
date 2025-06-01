@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Handles machine logic: triggers reactions based on ingredients inside Beakers
-/// or input zones (like Distiller). Pulls valid recipes from a shared ReactionRecipeLibrary.
-/// </summary>
+// Handles machine logic: triggers reactions based on ingredients inside Beakers
+// or input zones (like Distiller). Pulls valid recipes from a shared ReactionRecipeLibrary.
 public class MachineReactor : MonoBehaviour
 {
     [Header("Machine Type")]
     public MachineType machineType; // Set per prefab
 
-    [Header("Link to central Reaction Recipe Library")]
+    [Header("Reaction Recipe Library")]
     public ReactionRecipeLibrary recipeLibrary;
 
     [Header("Activation Settings")]
