@@ -5,7 +5,7 @@ using UnityEngine;
 // it will register its IngredientType once.
 public class LiquidIngredientTag : MonoBehaviour
 {
-    [Header("Ingredient Type of this liquid")]
+    [Header("Liquid Ingredient Type")]
     public IngredientType ingredientType;
 
     private void OnTriggerEnter(Collider other)

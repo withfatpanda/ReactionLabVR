@@ -2,6 +2,8 @@
 
 public enum IngredientType
 {
+    None, // Use for optional second ingredient
+
     // Raw Ingredients
     Water,
     Salt,

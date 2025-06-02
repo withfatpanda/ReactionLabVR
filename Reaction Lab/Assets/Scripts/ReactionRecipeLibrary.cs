@@ -8,6 +8,6 @@ using UnityEngine;
 /// </summary>
 public class ReactionRecipeLibrary : MonoBehaviour
 {
-    [Header("All available reactions in the game")]
+    [Header("All Available Recipes")]
     public List<ReactionRecipe> allRecipes = new List<ReactionRecipe>();
 }

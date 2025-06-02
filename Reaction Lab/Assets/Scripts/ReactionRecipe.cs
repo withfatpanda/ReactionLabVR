@@ -1,21 +1,23 @@
+
 using UnityEngine;
 
-/// <summary>
-/// Represents a single chemical reaction setup used in Reaction Lab VR.
-/// This class is serializable and shared across all systems (machines, libraries).
-/// </summary>
+// Represents a single chemical reaction setup used in Reaction Lab VR.
+// This class is serializable and shared across all systems (machines, libraries).
 [System.Serializable]
 public class ReactionRecipe
 {
-    [Header("First required ingredient (dropdown)")]
+    [Header("First Ingredient")]
     public IngredientType ingredientAType;
 
-    [Header("Second required ingredient (optional)")]
+    [Header("Second Ingredient (None = Single)")]
     public IngredientType ingredientBType;
 
-    [Header("Which machine performs this reaction")]
+    [Header("Required Machine")]
     public MachineType requiredMachine;
 
-    [Header("Prefab result of the reaction")]
+    [Header("Final Compound")]
     public GameObject resultingCompoundPrefab;
+
+    [Header("Single Ingredient Reaction?")]
+    public bool allowSingleIngredient = false;
 }
