@@ -1,177 +1,206 @@
-
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// This script manages the interaction between chemical containers and lab machines.
-// It reads from the central ReactionRecipeLibrary to determine if a reaction should occur
-// when a container is inserted and a machine is activated. Handles unique cases for 
-// machines like the Distiller and Electric Circuit, which have special logic.
+// This script controls machine behavior in Reaction Lab VR.
+// It supports reactions triggered by buttons, freezer door closes, and special logic
+// for distillers and electric circuits. It also logs successful reactions to the clipboard.
 
 public class MachineReactor : MonoBehaviour
 {
-    // The type of machine this reactor represents (e.g., BunsenBurner, Freezer, etc.)
     [Header("Machine Type")]
     public MachineType machineType;
 
-    // Reference to the reaction recipe library which contains all reaction rules
-    [Header("Recipe Library")]
+    [Header("Reaction Configuration")]
     public ReactionRecipeLibrary recipeLibrary;
 
-    // Used only by Distiller machines: the input container permanently inside the machine
+    [Header("Trigger Zones")]
+    public Collider containerTriggerZone;  // Detects containers placed into standard machines
+    public Collider buttonTriggerZone;     // Button or lever that triggers the reaction (not used by Freezer)
+
     [Header("Distiller Only")]
-    public Container fixedInputContainer;
+    public Container fixedInputContainer;  // For distillers: internal container permanently attached
+    public Transform outputZone;           // Where the result spawns if no output container is found
 
-    // The Transform where a result will be spawned if no output container is present (Distiller only)
-    public Transform outputZone;
-
-    // For Electric Circuit only: the required electrodes that must be placed into the container
     [Header("Electric Circuit Only")]
-    public GameObject electrodeA;
-    public GameObject electrodeB;
+    public GameObject electrodeA;          // Required rod A
+    public GameObject electrodeB;          // Required rod B
 
-    // Internal list tracking which containers are currently in or on the machine
+    [Header("Clipboard Display")]
+    public RecipeClipboardUI clipboardUI;  // Reference to clipboard UI to log reactions
+
+    // Tracks active containers in standard machines (ignored by Distiller)
     private List<Container> currentContainers = new List<Container>();
 
-    private void Start()
+    private void OnTriggerEnter(Collider other)
     {
-        // On start, detect containers already in the machine's area using a physics overlap check
-        Collider[] overlapping = Physics.OverlapBox(transform.position, transform.localScale * 1.5f);
-        foreach (var col in overlapping)
+        // Add a container if it enters the container trigger zone
+        if (containerTriggerZone != null && other == containerTriggerZone)
         {
-            Container c = col.GetComponent<Container>();
+            Container c = other.GetComponent<Container>();
             if (c != null && !currentContainers.Contains(c))
             {
                 currentContainers.Add(c);
             }
         }
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        // When a container enters the trigger area, register it
-        Container container = other.GetComponent<Container>();
-        if (container != null && !currentContainers.Contains(container))
+        // Activate reaction if button is pressed
+        if (buttonTriggerZone != null && other == buttonTriggerZone)
         {
-            currentContainers.Add(container);
+            ActivateReaction();
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        // When a container exits the trigger area, unregister it
-        Container container = other.GetComponent<Container>();
-        if (container != null)
+        // Remove container if it exits the container trigger zone
+        if (containerTriggerZone != null && other == containerTriggerZone)
         {
-            currentContainers.Remove(container);
+            Container c = other.GetComponent<Container>();
+            if (c != null)
+            {
+                currentContainers.Remove(c);
+            }
         }
     }
 
-    // This method should be called externally when the machine is activated (e.g., a button is pressed)
-    public void ActivateReaction()
+    // Freezer closes and automatically triggers reaction
+    public void TriggerFreezerReaction()
     {
-        TryReact();
+        if (machineType == MachineType.Freezer)
+        {
+            Debug.Log("Freezer closed, attempting cold reaction...");
+            ActivateReaction();
+        }
     }
 
-    // This method determines if a valid reaction should occur based on the current state
-    private void TryReact()
+    // Determines what type of reaction logic to use
+    public void ActivateReaction()
     {
-        // Handle Distiller-specific logic
         if (machineType == MachineType.Distiller)
         {
             TryDistillerReaction();
-            return;
         }
+        else
+        {
+            TryStandardReactions();
+        }
+    }
 
-        // For all other machines, iterate through tracked containers
+    // Handles typical container-based machines (Beaker, Bunsen Burner, Freezer)
+    private void TryStandardReactions()
+    {
         foreach (Container container in currentContainers)
         {
             if (!container.HasContents()) continue;
 
-            // Special case for Electric Circuit: must have both electrodes inside
+            // Electric circuit needs both electrodes to be inside the container
             if (machineType == MachineType.ElectricCircuit &&
-               (!IsElectrodeInside(container, electrodeA) || !IsElectrodeInside(container, electrodeB)))
+                (!IsElectrodeInside(container, electrodeA) || !IsElectrodeInside(container, electrodeB)))
             {
                 Debug.Log("Electrodes not properly inserted into container.");
                 continue;
             }
 
-            // Try matching container contents to a reaction
             AttemptMatch(container);
         }
     }
 
-    // Special logic for Distiller machines which take input from a fixed container
-    // and output to another container or into the world
+    // Handles the fixed distiller logic using the internal container
     private void TryDistillerReaction()
     {
         if (fixedInputContainer == null || !fixedInputContainer.HasContents()) return;
 
-        // Get current ingredients from the fixed input container
         List<IngredientType> ingredients = fixedInputContainer.GetContainedIngredientTypes();
 
         foreach (ReactionRecipe recipe in recipeLibrary.allRecipes)
         {
-            // Skip recipes not intended for the Distiller
             if (recipe.requiredMachine != MachineType.Distiller) continue;
+            if (!IngredientsMatch(recipe, ingredients)) continue;
 
-            // Check if this recipe matches the container's contents
-            if (IngredientsMatch(recipe, ingredients))
+            GameObject result = recipe.resultingCompoundPrefab;
+
+            // Clear the internal distiller container
+            fixedInputContainer.ClearContents();
+
+            // Try to output into a separate container
+            foreach (Container target in currentContainers)
             {
-                GameObject result = recipe.resultingCompoundPrefab;
+                if (target == fixedInputContainer) continue;
 
-                // Clear the fixed container's contents after reaction
-                fixedInputContainer.ClearContents();
+                target.SetContents(result);
+                Debug.Log("Distiller output sent to container below.");
 
-                // Try to place the result into a secondary container (beneath the distiller)
-                foreach (Container target in currentContainers)
+                // Log to clipboard if available
+                if (clipboardUI != null)
                 {
-                    if (target == fixedInputContainer) continue;
-
-                    target.SetContents(result);
-                    Debug.Log("Distiller output sent to container below.");
-                    return;
+                    clipboardUI.AddReactionToClipboard(
+                        recipe.ingredientAType.ToString(),
+                        recipe.ingredientBType.ToString(),
+                        result.name,
+                        machineType.ToString()
+                    );
                 }
 
-                // If no container below, spawn the result into the world
-                if (outputZone != null && result != null)
-                {
-                    Instantiate(result, outputZone.position, Quaternion.identity);
-                    Debug.Log("Distiller output spawned into world.");
-                }
                 return;
             }
+
+            // Fallback: spawn result directly into the world
+            if (outputZone != null && result != null)
+            {
+                Instantiate(result, outputZone.position, Quaternion.identity);
+                Debug.Log("Distiller output spawned into world.");
+
+                if (clipboardUI != null)
+                {
+                    clipboardUI.AddReactionToClipboard(
+                        recipe.ingredientAType.ToString(),
+                        recipe.ingredientBType.ToString(),
+                        result.name,
+                        machineType.ToString()
+                    );
+                }
+            }
+
+            return;
         }
 
-        // If no match was found
         Debug.Log("No valid distillation recipe.");
     }
 
-    // Tries to match a container's contents to any valid recipe for this machine type
+    // Attempts to match container contents to known recipes
     private void AttemptMatch(Container container)
     {
         List<IngredientType> ingredients = container.GetContainedIngredientTypes();
 
         foreach (ReactionRecipe recipe in recipeLibrary.allRecipes)
         {
-            // Skip recipes meant for other machines
             if (recipe.requiredMachine != machineType) continue;
+            if (!IngredientsMatch(recipe, ingredients)) continue;
 
-            // Check for match and apply result
-            if (IngredientsMatch(recipe, ingredients))
+            container.SetContents(recipe.resultingCompoundPrefab);
+            Debug.Log("Reaction successful: " + recipe.resultingCompoundPrefab.name);
+
+            // Log to clipboard if available
+            if (clipboardUI != null)
             {
-                container.SetContents(recipe.resultingCompoundPrefab);
-                Debug.Log("Reaction successful: " + recipe.resultingCompoundPrefab.name);
-                return;
+                clipboardUI.AddReactionToClipboard(
+                    recipe.ingredientAType.ToString(),
+                    recipe.ingredientBType.ToString(),
+                    recipe.resultingCompoundPrefab.name,
+                    machineType.ToString()
+                );
             }
+
+            return;
         }
 
         Debug.Log("No matching recipe for container on " + machineType);
     }
 
-    // Determines whether the given ingredients match the recipe requirements
+    // Ingredient matcher for 1 or 2 ingredient recipes
     private bool IngredientsMatch(ReactionRecipe recipe, List<IngredientType> ingredients)
     {
-        // Handle single-ingredient recipes (when ingredientBType is None)
         if (recipe.allowSingleIngredient &&
             recipe.ingredientBType == IngredientType.None &&
             ingredients.Contains(recipe.ingredientAType))
@@ -179,14 +208,13 @@ public class MachineReactor : MonoBehaviour
             return true;
         }
 
-        // Standard dual-ingredient or double-of-same-ingredient reaction
         return (ingredients.Contains(recipe.ingredientAType) &&
                 ingredients.Contains(recipe.ingredientBType)) ||
                (recipe.ingredientAType == recipe.ingredientBType &&
                 ingredients.FindAll(i => i == recipe.ingredientAType).Count >= 2);
     }
 
-    // Used by Electric Circuit to check whether both electrodes are inside the container
+    // For electric circuit: check if the electrode objects intersect the container's collider
     private bool IsElectrodeInside(Container container, GameObject electrode)
     {
         Collider containerCollider = container.GetComponent<Collider>();
