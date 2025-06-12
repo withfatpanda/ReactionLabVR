@@ -4864,94 +4864,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 773728306}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &775203117 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7359348153474537234, guid: c9d72216b2dffe949a4c6f88f2db2276,
-    type: 3}
-  m_PrefabInstance: {fileID: 2087634151}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &775203123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 775203117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eaa316a3d12ddaa4e83caf66ca7e9804, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mats: []
-  level: 0.5
-  minMaxBounds: {x: 0, y: 0}
-  mf: {fileID: 0}
-  mr: {fileID: 0}
-  m: {fileID: 0}
-  DebugAnchor: 0
-  debugSize: 1
-  _anchorLength: 0.5
-  dampening: 0
-  anchor: {x: 0, y: 0, z: 0}
-  anchorVelocity: {x: 0, y: 0, z: 0}
-  transformedPoint: {x: 0, y: 0, z: 0}
-  prevTransformedPoint: {x: 0, y: 0, z: 0}
-  calculateTextureProjection: 1
-  TextureSize: 1
-  TextureSizeScalar: 1
-  texCurveSize:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  TopLeft: {x: 0, y: 0, z: 0}
-  TopRight: {x: 0, y: 0, z: 0}
-  BottomLeft: {x: 0, y: 0, z: 0}
-  BottomRight: {x: 0, y: 0, z: 0}
-  ExposedLiquidT: {fileID: 0}
-  GravityDirection: {x: 0, y: -1, z: 0}
-  normalizeGravityDirection: 1
-  verts: []
-  cPos: {x: 0, y: 0, z: 0}
-  finalAnchor: {x: 0, y: 0, z: 0}
-  finalPoint: {x: 0, y: 0, z: 0}
-  shaderNames: []
---- !u!114 &775203124
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 775203117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8821811f704fa594182c00cc2811db0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bottleSmash: {fileID: 2087634160}
-  UpdateSurfaceColor: 1
-  UpdateColor: 1
-  UpdateSurfaceEmission: 1
-  UpdateEmission: 1
 --- !u!1 &788221811 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4563376868421477956, guid: 5be95fbdf5060f940b2448c70481f7a4,
@@ -11583,6 +11495,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contentsSpawnPoint: {fileID: 0}
+  pourOriginPoint: {fileID: 0}
+  pourAngleThreshold: 100
+  pourCooldown: 1
+  currentLiquidIngredient: 0
+  hasLiquid: 0
   currentIngredients: []
   containedIngredientTypes: 
 --- !u!4 &2067022842 stripped
@@ -11785,6 +11702,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 722801784858024046, guid: c9d72216b2dffe949a4c6f88f2db2276,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1864672291711037262, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -11815,6 +11737,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4920792360818468299, guid: c9d72216b2dffe949a4c6f88f2db2276,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6187139736788210149, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -11839,6 +11766,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7359348153474537234, guid: c9d72216b2dffe949a4c6f88f2db2276,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7767115079565826802, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
@@ -11894,7 +11826,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 1b3840ada8dddff40b52434ea68b0b96, type: 2}
+      objectReference: {fileID: 2100000, guid: 61cd2ab78dc56ab408485fef1628a35a, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -11911,26 +11843,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2087634155}
-    - targetCorrespondingSourceObject: {fileID: 6953987389398810696, guid: c9d72216b2dffe949a4c6f88f2db2276,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2087634160}
-    - targetCorrespondingSourceObject: {fileID: 6953987389398810696, guid: c9d72216b2dffe949a4c6f88f2db2276,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2087634159}
     - targetCorrespondingSourceObject: {fileID: 3418035696036501787, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1323508191}
-    - targetCorrespondingSourceObject: {fileID: 7359348153474537234, guid: c9d72216b2dffe949a4c6f88f2db2276,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 775203123}
-    - targetCorrespondingSourceObject: {fileID: 7359348153474537234, guid: c9d72216b2dffe949a4c6f88f2db2276,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 775203124}
   m_SourcePrefab: {fileID: 100100000, guid: c9d72216b2dffe949a4c6f88f2db2276, type: 3}
 --- !u!4 &2087634152 stripped
 Transform:
@@ -11977,58 +11893,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2087634159
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2087634154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9595bd8a6648b72478d69bc5182430eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rateOfFlow: 1
-  smashScript: {fileID: 2087634160}
-  liquid: {fileID: 775203123}
-  controllingTransform: {fileID: 2087634153}
-  pouringParticleSystem: {fileID: 0}
-  volumeOfParticles: 70
---- !u!114 &2087634160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2087634154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaf538c07796e5745a75c30bc3ec6117, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: {r: 0, g: 0, b: 0, a: 0}
-  cachedColor: {r: 0, g: 0, b: 0, a: 0}
-  registeredComponents: []
-  Cork: {fileID: 0}
-  Liquid: {fileID: 775203117}
-  Glass: {fileID: 1323508187}
-  Glass_Shattered: {fileID: 0}
-  Label: {fileID: 0}
-  DespawnTime: 5
-  Effect: {fileID: 0}
-  Splat: {fileID: 0}
-  SplatMask:
-    serializedVersion: 2
-    m_Bits: 0
-  maxSplatDistance: 5
-  shatterAtSpeed: 2
-  allowShattering: 0
-  onlyAllowShatterOnCollision: 1
-  previousPos: {x: 0, y: 0, z: 0}
-  previousVelocity: {x: 0, y: 0, z: 0}
-  randomRot: {x: 0, y: 0, z: 0}
-  _lastHitSpeed: 0
 --- !u!64 &2097265378
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -16485,6 +16349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bottleSmash: {fileID: 0}
+  lva: {fileID: 0}
   UpdateSurfaceColor: 1
   UpdateColor: 1
   UpdateSurfaceEmission: 1
@@ -16503,6 +16368,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mats: []
   level: 0.5
+  finalLevel: 0
   minMaxBounds: {x: 0, y: 0}
   mf: {fileID: 0}
   mr: {fileID: 0}
@@ -16519,10 +16385,8 @@ MonoBehaviour:
   TextureSize: 1
   TextureSizeScalar: 1
   texCurveSize:
-    serializedVersion: 2
     m_Curve:
-    - serializedVersion: 3
-      time: 0
+    - time: 0
       value: 1
       inSlope: 0
       outSlope: 0
@@ -16530,8 +16394,7 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    - serializedVersion: 3
-      time: 1
+    - time: 1
       value: 1
       inSlope: 0
       outSlope: 0
@@ -16542,6 +16405,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  previous: {x: 0, y: 0, z: 0, w: 0}
+  totalRotation: 0
   TopLeft: {x: 0, y: 0, z: 0}
   TopRight: {x: 0, y: 0, z: 0}
   BottomLeft: {x: 0, y: 0, z: 0}
@@ -16550,6 +16415,12 @@ MonoBehaviour:
   GravityDirection: {x: 0, y: -1, z: 0}
   normalizeGravityDirection: 1
   verts: []
+  shader_Key_localHeight: 0
+  shader_Key_anchor: 0
+  shader_Key_point: 0
+  shader_Key_level: 0
+  prvLevel: -1
+  prevQ: {x: 0, y: 0, z: 0, w: 1}
   cPos: {x: 0, y: 0, z: 0}
   finalAnchor: {x: 0, y: 0, z: 0}
   finalPoint: {x: 0, y: 0, z: 0}
@@ -16667,6 +16538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bottleSmash: {fileID: 0}
+  lva: {fileID: 0}
   UpdateSurfaceColor: 1
   UpdateColor: 1
   UpdateSurfaceEmission: 1
@@ -16685,6 +16557,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mats: []
   level: 0.5
+  finalLevel: 0
   minMaxBounds: {x: 0, y: 0}
   mf: {fileID: 0}
   mr: {fileID: 0}
@@ -16701,10 +16574,8 @@ MonoBehaviour:
   TextureSize: 1
   TextureSizeScalar: 1
   texCurveSize:
-    serializedVersion: 2
     m_Curve:
-    - serializedVersion: 3
-      time: 0
+    - time: 0
       value: 1
       inSlope: 0
       outSlope: 0
@@ -16712,8 +16583,7 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    - serializedVersion: 3
-      time: 1
+    - time: 1
       value: 1
       inSlope: 0
       outSlope: 0
@@ -16724,6 +16594,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  previous: {x: 0, y: 0, z: 0, w: 0}
+  totalRotation: 0
   TopLeft: {x: 0, y: 0, z: 0}
   TopRight: {x: 0, y: 0, z: 0}
   BottomLeft: {x: 0, y: 0, z: 0}
@@ -16732,6 +16604,12 @@ MonoBehaviour:
   GravityDirection: {x: 0, y: -1, z: 0}
   normalizeGravityDirection: 1
   verts: []
+  shader_Key_localHeight: 0
+  shader_Key_anchor: 0
+  shader_Key_point: 0
+  shader_Key_level: 0
+  prvLevel: -1
+  prevQ: {x: 0, y: 0, z: 0, w: 1}
   cPos: {x: 0, y: 0, z: 0}
   finalAnchor: {x: 0, y: 0, z: 0}
   finalPoint: {x: 0, y: 0, z: 0}
