@@ -4556,7 +4556,7 @@ PrefabInstance:
     - target: {fileID: 6953987389398810696, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7767115079565826802, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
@@ -10587,7 +10587,7 @@ PrefabInstance:
     - target: {fileID: 6953987389398810696, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7767115079565826802, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
@@ -11833,7 +11833,7 @@ PrefabInstance:
     - target: {fileID: 6953987389398810696, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7359348153474537234, guid: c9d72216b2dffe949a4c6f88f2db2276,
         type: 3}
@@ -11890,6 +11890,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: 8331253045255960363, guid: c9d72216b2dffe949a4c6f88f2db2276,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1b3840ada8dddff40b52434ea68b0b96, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -11987,7 +11992,7 @@ MonoBehaviour:
   rateOfFlow: 1
   smashScript: {fileID: 2087634160}
   liquid: {fileID: 775203123}
-  controllingTransform: {fileID: 0}
+  controllingTransform: {fileID: 2087634153}
   pouringParticleSystem: {fileID: 0}
   volumeOfParticles: 70
 --- !u!114 &2087634160
@@ -12018,7 +12023,7 @@ MonoBehaviour:
     m_Bits: 0
   maxSplatDistance: 5
   shatterAtSpeed: 2
-  allowShattering: 1
+  allowShattering: 0
   onlyAllowShatterOnCollision: 1
   previousPos: {x: 0, y: 0, z: 0}
   previousVelocity: {x: 0, y: 0, z: 0}
